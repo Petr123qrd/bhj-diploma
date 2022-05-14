@@ -16,7 +16,13 @@ class CreateTransactionForm extends AsyncForm {
    * Обновляет в форме всплывающего окна выпадающий список
    * */
   renderAccountsList() {
-
+    Account.list(null, (error, response) => {
+      if(response && response.success){
+        response.data.forEach(el => {
+          this.element.querySelector('.accounts-select').insertAdjacentHTML('beforeend', `<option value="${el.id}">${el.name}</option>`);
+        })
+      }
+    });
   }
 
   /**
@@ -26,6 +32,14 @@ class CreateTransactionForm extends AsyncForm {
    * в котором находится форма
    * */
   onSubmit(data) {
-
+    Transaction.create(data, (error, response) => {
+      if(response && response.success){
+        App.update();
+        this.element.reset();
+        this.element.closest('.modal').style.display = 'none';
+      } else {
+        alert(response.error)
+      }
+    });
   }
 }
